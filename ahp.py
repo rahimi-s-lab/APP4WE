@@ -29,13 +29,14 @@ e = np.linalg.eig(A)[1][:,0]
 p = e/e.sum()
 
 
+#this is to combine the above together such that it is more cohesive together-more reliable
 def pairwise_matrix(n):
     """
     #call this function for generating pair-wise comparison matrices
     #and priority vectors for assessing
-    #each of the alternative against each criterion
+    #each of the alternative against each criterion: SIPS, IPS, NIPT, and no test
     >>> pairwise_matrix(4)
-    How important is option0 over option1 ?: How important is option0 over option2 ?: How important is option0 over option3 ?: How important is option1 over option2 ?: How important is option1 over option3 ?: How important is option2 over option3 ?: (array([0.32999777+0.j, 0.32999777+0.j, 0.19958055+0.j, 0.14042392+0.j]), (4.0606470275541415+0j))
+    (array([0.32999777+0.j, 0.32999777+0.j, 0.19958055+0.j, 0.14042392+0.j]), (4.0606470275541415+0j))
     
     """
     A = np.ones([n,n])
@@ -43,16 +44,22 @@ def pairwise_matrix(n):
     for i in range(0,n):
         for j in range(0,n):
             if i<j:
-                aij = input('How important is option{} over option{} ?: '.format(i,j)) #to channge according to format of raw data
+                aij = input('How important is option{} over option{} ?: '.format(i,j)) #to channge according to the approriate collection format of raw data 
                 A[i,j] = float(aij)
-                A[j,i] = 1/float(aij)
-    #Computing the priority vector 
+                A[j,i] = 1/float(aij) #this part here for priority
+                
+    #Computing the priority vector (basically the weight) 
     eig_val = np.linalg.eig(A)[0].max()
     eig_vec = np.linalg.eig(A)[1][:,0]
     p = eig_vec/eig_vec.sum()
     return p, eig_val
 
-
+#labeling the different criterias
+pr_c = pairwise_matrix(4)[0]  #All Criteria
+pr_c0 = pairwise_matrix(4)[0] #Criteria 0: Waiting time
+pr_c1 = pairwise_matrix(4)[0] #Criteria 1: Cost
+pr_c2 = pairwise_matrix(4)[0] #Criteria 2: Detection rate
+pr_c2 = pairwise_matrix(4)[0] #Criteria 3: Week of pregnancy that test will be taken
 
 
 
