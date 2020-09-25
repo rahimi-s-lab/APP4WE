@@ -11,22 +11,22 @@ import operator
 n = 4
 
 # Creating default matrix of ones
-A = np.ones([n,n])
+#A = np.ones([n,n])
 # Running a for loop to take answer from user and populate the upper triangular elements
-for i in range(0,n):
-    for j in range(0,n):
-         if i<j:
-             aij = input('How important is option{} over option{} ?: '.format(i,j)) #this to change for later
+#for i in range(0,n):
+    #for j in range(0,n):
+         #if i<j:
+             #aij = input('How important is option{} over option{} ?: '.format(i,j)) #this to change for later
              #because depends on nature of raw data
-             A[i,j] = float(aij) #Upper triangular elements
-             A[j,i] = 1/float(aij) #Lower triangular elements
+             #A[i,j] = float(aij) #Upper triangular elements
+             #A[j,i] = 1/float(aij) #Lower triangular elements
 
 
 #compute the priority vector by normalizing the eigen vector of the largest eigen value.
 #The elements in this eigen vector are the weights of the criteria.
-eig_val = np.linalg.eig(A)[0].max()
-e = np.linalg.eig(A)[1][:,0]
-p = e/e.sum()
+#eig_val = np.linalg.eig(A)[0].max()
+#e = np.linalg.eig(A)[1][:,0]
+#p = e/e.sum()
 
 
 #this is to combine the above together such that it is more cohesive together-more reliable
@@ -47,7 +47,7 @@ def pairwise_matrix(n):
                 aij = input('How important is option{} over option{} ?: '.format(i,j)) #to channge according to the approriate collection format of raw data 
                 A[i,j] = float(aij)
                 A[j,i] = 1/float(aij) #this part here for priority
-                
+    print(A)            
     #Computing the priority vector (basically the weight) 
     eig_val = np.linalg.eig(A)[0].max()
     eig_vec = np.linalg.eig(A)[1][:,0]
@@ -61,8 +61,10 @@ pr_c1 = pairwise_matrix(4)[0] #Criteria 1: Cost
 pr_c2 = pairwise_matrix(4)[0] #Criteria 2: Detection rate
 pr_c2 = pairwise_matrix(4)[0] #Criteria 3: Week of pregnancy that test will be taken
 
-
+r = pr_c0*pr_c[0] + pr_c1*pr_c[1] + pr_c2*pr_c[2]
 
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
+    pairwise_matrix(4)
+    print(r)
