@@ -2,21 +2,26 @@
 #Pre-natal choices
 #from https://www.researchprotocols.org/2019/10/e13321/pdf accessed September 16th, 2020 
 import numpy as np
-import pandas as pd
-from sklearn.preprocessing import Normalizer
-import operator
+import pandas as pd 
+  
+# read an excel file and convert  
+# into a dataframe object 
+df = pd.DataFrame(pd.read_excel("dummydata.xlsx")) 
+  
+# show the dataframe 
+#print(df) 
 
 
 # Number of options: taken from:resprot_v8i10e13321_app2.pdf ; accessed September 16th, 2020 
 n = 4
-
+b=1
 # Creating default matrix of ones
 A = np.ones([n,n])
 # Running a for loop to take answer from user and populate the upper triangular elements
 for i in range(0,n):
     for j in range(0,n):
-         if i<j:
-             aij = input('How important is option{} over option{} ?: '.format(i,j)) #this to change for later
+        if i<j:
+             aij = float(df.P1.to_numpy) #this to change for later
              #because depends on nature of raw data
              A[i,j] = float(aij) #Upper triangular elements
              A[j,i] = 1/float(aij) #Lower triangular elements
