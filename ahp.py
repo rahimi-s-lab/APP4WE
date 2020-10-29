@@ -21,7 +21,7 @@ A = np.ones([n,n])
 for i in range(0,n):
     for j in range(0,n):
         if i<j:
-             aij = float(df.P1.to_numpy) #this to change for later
+             aij = float(df.P1[j]) #this to change for later
              #because depends on nature of raw data
              A[i,j] = float(aij) #Upper triangular elements
              A[j,i] = 1/float(aij) #Lower triangular elements
@@ -51,15 +51,23 @@ def pairwise_matrix(n):
     for i in range(0,n):
         for j in range(0,n):
             if i<j:
-                aij = input('How important is option{} over option{} ?: '.format(i,j)) #to channge according to the approriate collection format of raw data 
+                aij = float(df.P1[j]) 
                 A[i,j] = float(aij)
                 A[j,i] = 1/float(aij) #this part here for priority
                 
     #Computing the priority vector (basically the weight)-for basically each category 
     eig_val = np.linalg.eig(A)[0].max()
     eig_vec = np.linalg.eig(A)[1][:,0]
+    n=len(A[0])
     p = eig_vec/eig_vec.sum()
-    return p, eig_val
+    V,D=np.linalg.eig(A)                                              # For judgment eigenvalues ​​and eigenvectors,VEigenvalues,DFeature vector; 
+    list1 = list(V)
+    #B= np.max(list1)        #something wrong here....                                              # Largest eigenvalues
+    index = list1.index(B)
+    C = D[:, index]                                                        #Eigenvector corresponding to #
+    CI=(B-n)/(n-1)
+    #print(CI)
+    return p, eig_val, CI
 
 #labeling the different criterias, where it measures out importance of {SIPS,IPS, NIPT, and no test} which is the alternative set
 #just to be able to access more easily
@@ -77,5 +85,6 @@ print("\n")
 # final step is to get the weighted arithmetic sum to yield the rank vector
 r = pr_c0*pr_c[0] + pr_c1*pr_c[1] + pr_c2*pr_c[2]+pr_c3*pr_c[3]
 print(r)
+print(pairwise_matrix(4))
 
 
