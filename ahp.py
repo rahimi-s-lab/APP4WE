@@ -4,34 +4,20 @@
 import numpy as np
 import pandas as pd 
   
-# read an excel file and convert  
-# into a dataframe object 
-df = pd.DataFrame(pd.read_excel("dummydata.xlsx")) 
-del df['Questions']  
-# show the dataframe 
-#print(df) 
-columns = list(df)
+import numpy as np
+import pandas as pd 
 
-
-n= 6 #6 criterias
-
-
-A = np.ones([n,n])
-for m in columns:#just to compute all the columns automatically otherwise would have to manually change names of columns
-    
-    l=list(df[m])
-    if len(l)>15: #because we are only concerning ourselves with the first 6 criterias, as the 7th one is optional
-        del l[:-1]
-    #print(l)
+def ahp(m,subList):
+    A = np.ones([m,m])
     k=0
-    for i in range(0,n):
-        A[i,i]=1
-        for j in range(0,n):
             
-            if i<j:
+    for l in range(0,m):
+        A[l,l]=1
+        for h in range(0,m):
+            if l<h:
                
-                A[i,j] = float(l[k])
-                A[j,i] = 1/float(l[k]) #this part here for priority  
+                A[l,h] = float(subList[k])
+                A[h,l] = 1/float(subList[k]) #this part here for priority  
                 k+=1
 
     #Computing the priority vector 
@@ -40,23 +26,168 @@ for m in columns:#just to compute all the columns automatically otherwise would 
     p = eig_vec/eig_vec.sum()
     
     #computing consistency ratio
-    V,D=np.linalg.eig(A)
+    m=len(A)                                    # Gets the number of indicators
+    n=len(A[0])
+    RI=[0, 0, 0.58, 0.90, 1.12, 1.24, 1.32, 1.41, 1.45, 1.49, 1.51]
+    R= np.linalg.matrix_rank(A)                                # For judgment rank of matrix
+    V,D=np.linalg.eig(A)                                              # For judgment eigenvalues ​​and eigenvectors,VEigenvalues,DFeature vector; 
     list1 = list(V)
-    B= np.max(list1)
-    index = list1.index(eig_val)
-    CI = D[:, index]                                                        #Eigenvector corresponding to #
-    CR=(B-n)/(n-1)
-    print(m)#to signify which column we're in
-    print('ahp matrix')
-    print(A)
-    print('Priority vertex (weights of criterias) from criteria 1 to 6:')
+    B= np.max(list1)                                                      # Largest eigenvalues
+    index = list1.index(B)
+    C = D[:, index]                                                       # Eigenvector corresponding to #
+    CI=(B-n)/(n-1)                                                          # Calculate the consistency check indicatorCI
+    CR=CI/RI[n]
+    
+    #to signify which column we're in
+    
+    
+    print('Priority vertex (weights of criterias) from criteria 1 to '+ str(m)+' :' )
     print(p)
-    print('Consistency Ratio')
-    if CR>0.1:
-        
-        print(str(CR)+' Good Consistency Ratio')
+    print('Consistency Ratio ' + str(CR))
+    if CR > 0.1:
+        print('Bad consistency Ratio\n')
     else:
-        print(str(CR)+' Bad Consistency Ratio-value error somewhere in column ' + str(m))
+        print('\n')
+        
+# read an excel file and convert  
+# into a dataframe object
+def calc(excelname,excelsheet):
+    xls = pd.ExcelFile(excelname) 
+    # show the dataframe 
+    #print(df)
+    df=pd.read_excel(xls, excelsheet)
+    columns = list(df)
+    Blist = []
+
+    for i in columns:
+        if 'QC' not in str(i):
+            columns.remove(i)
+
+    del columns[0:31]  
+    del columns[::2]
+    del columns[-1]
+
+
+    for i in columns:
+        Blist.append(list(df[i]))
+
+
+
+
+    i=0
+    subList=[]
+    print(excelname + "\n")
+    while i<len(Blist[0]):
+        print("Participant #" + str(i+1))
+        if i==0:
+            for j in Blist:
+                subList.append(j[i])
+            i+=1
+            if  subList[4]==9999 and subList[5]==9999:#if  facteur 1 and 2 are included
+                m=5
+                print("preprocessed answers: "+ str(subList))
+
+                while 9999 in subList:
+                    subList.remove(9999)
+                try:
+                    print("processed answers: "+ str(subList))
+
+                    ahp(m,subList)
+                except IndexError:
+                    print("missing values for this participant\n")
+                    continue
+        
+            elif  subList[5]==9999:#if only facteur 1 is included
+                m=6
+                print("preprocessed answers: "+ str(subList))
+
+                while 9999 in subList:
+                    subList.remove(9999)
+                try:
+                    print("processed answers: "+ str(subList))
+
+                    ahp(m,subList)
+                except IndexError:
+                    print("missing values for this participant\n")
+                    continue
+                
+            
+            
+            else:#if neither facteur 1 or 2 are included
+                m=7
+                print("preprocessed answers: "+ str(subList))
+
+                try:
+                    print("processed answers: "+ str(subList))
+
+                    ahp(m,subList)
+                except IndexError:
+                    print("missing values for this participant\n")
+                    continue
+            
+            
+            
+            
+        else:
+            n=0
+            for j in Blist:
+
+                try:
+                    subList[n] = (j[i])
+                except IndexError:
+                    subList.append(j[i])
+                n+=1
+            i+=1
+            if  subList[4]==9999 and subList[5]==9999:#if  facteur 1 and 2 are included
+                m=5
+                print("preprocessed answers: "+ str(subList))
+
+                while 9999 in subList:
+                    subList.remove(9999)
+                try:
+                    print("processed answers: "+ str(subList))
+
+                    ahp(m,subList)
+                except IndexError:
+                    print("missing values for this participant\n")
+            elif  subList[5]==9999:#if only facteur 1 is included
+                m=6
+                print("preprocessed answers: "+ str(subList))
+
+                while 9999 in subList:
+                    subList.remove(9999)
+                try:
+                    print("processed answers: "+ str(subList))
+
+                    ahp(m,subList)
+                except IndexError:
+                    print("missing values for this participant\n")
+                    continue
+           
+                    continue
+            else:#if neither facteur 1 or 2 are included
+                m=7
+                print("preprocessed answers: "+ str(subList))
+
+                try:
+                    print("processed answers: "+ str(subList))
+
+                    ahp(m,subList)
+                except IndexError:
+                    print("missing values for this participant\n")
+                    continue
+        
+        
+    
+    
+    
+
+
+
+    
+
+calc("APP4WE -Montréal-Phase1_2020 10 26.xlsx",'APP4WE - Questionnaires')
+calc("APP4WE-Québec-Phase1_2020 10 26.xlsx",'APP4WE-Questionnaire')
 
 
 
