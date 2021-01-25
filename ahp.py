@@ -48,6 +48,7 @@ def ahp(m,subList):
         print('Bad consistency Ratio\n')
     else:
         print('\n')
+    return p
         
 # read an excel file and convert  
 # into a dataframe object
@@ -83,47 +84,23 @@ def calc(excelname,excelsheet):
             for j in Blist:
                 subList.append(j[i])
             i+=1
-            if  subList[4]==9999 and subList[5]==9999:#if  facteur 1 and 2 are included
-                m=5
-                print("preprocessed answers: "+ str(subList))
-
-                while 9999 in subList:
-                    subList.remove(9999)
-                try:
-                    print("processed answers: "+ str(subList))
-
-                    ahp(m,subList)
-                except IndexError:
-                    print("missing values for this participant\n")
-                    continue
-        
-            elif  subList[5]==9999:#if only facteur 1 is included
-                m=6
-                print("preprocessed answers: "+ str(subList))
-
-                while 9999 in subList:
-                    subList.remove(9999)
-                try:
-                    print("processed answers: "+ str(subList))
-
-                    ahp(m,subList)
-                except IndexError:
-                    print("missing values for this participant\n")
-                    continue
+            m=7
+            k=0
+            
                 
-            
-            
-            else:#if neither facteur 1 or 2 are included
-                m=7
-                print("preprocessed answers: "+ str(subList))
-
-                try:
-                    print("processed answers: "+ str(subList))
-
-                    ahp(m,subList)
-                except IndexError:
-                    print("missing values for this participant\n")
-                    continue
+            print("preprocessed answers: "+ str(subList))
+            while k<len(subList):
+                if subList[k] == 9999:
+                    subList[k]=1
+                k+=1
+            try:
+                print("processed answers: "+ str(subList))
+                ahp(m,subList)
+                
+                
+            except IndexError:
+                print("missing values for this participant\n")
+                continue
             
             
             
@@ -138,44 +115,23 @@ def calc(excelname,excelsheet):
                     subList.append(j[i])
                 n+=1
             i+=1
-            if  subList[4]==9999 and subList[5]==9999:#if  facteur 1 and 2 are included
-                m=5
-                print("preprocessed answers: "+ str(subList))
-
-                while 9999 in subList:
-                    subList.remove(9999)
-                try:
-                    print("processed answers: "+ str(subList))
-
-                    ahp(m,subList)
-                except IndexError:
-                    print("missing values for this participant\n")
-            elif  subList[5]==9999:#if only facteur 1 is included
-                m=6
-                print("preprocessed answers: "+ str(subList))
-
-                while 9999 in subList:
-                    subList.remove(9999)
-                try:
-                    print("processed answers: "+ str(subList))
-
-                    ahp(m,subList)
-                except IndexError:
-                    print("missing values for this participant\n")
-                    continue
-           
-                    continue
-            else:#if neither facteur 1 or 2 are included
-                m=7
-                print("preprocessed answers: "+ str(subList))
-
-                try:
-                    print("processed answers: "+ str(subList))
-
-                    ahp(m,subList)
-                except IndexError:
-                    print("missing values for this participant\n")
-                    continue
+            
+            m=7
+            k=0
+            
+                
+            print("preprocessed answers: "+ str(subList))
+            while k<len(subList):
+                if subList[k] == 9999:
+                    subList[k]=1
+                k+=1
+            try:
+                print("processed answers: "+ str(subList))
+                ahp(m,subList)
+                
+            except IndexError:
+                print("missing values for this participant\n")
+                continue
         
         
     

@@ -79,17 +79,17 @@ def main(c,m,subList):
     lambdamax = amax(linalg.eigvals(A).real)
     CI=(lambdamax-m)/(m-1)
     CR=CI/RI[m-1]
-    
+    p=ahp(A,m, c)
     print('Priority vertex (weights of criterias) from criteria 1 to '+ str(m)+' :' )
-    print(ahp(A,m, c))
+    print(p)
     
     print("Inconsistency index of the criteria: ", CR)
     if CR>0.1:
         print("The pairwise comparison matrix of the criteria is inconsistent\n")
     else:
-        print("\n")
-
-     
+        print("The pairwise comparison matrix of the criteria is consistent\n")
+    return p
+    
 
 def calc(excelname,excelsheet):
 
@@ -99,7 +99,9 @@ def calc(excelname,excelsheet):
     df=pd.read_excel(xls, excelsheet)
     columns = list(df)
     Blist = []
-
+    w=1/float(67)
+    allpr=array([0.,0.,0.,0.,0.,0.,0.])
+    allpr2=array([1.,1.,1.,1.,1.,1.,1.])
     for i in columns:
         if 'QC' not in str(i):
             columns.remove(i)
@@ -125,45 +127,25 @@ def calc(excelname,excelsheet):
             for j in Blist:
                 subList.append(j[i])
             i+=1
-            if  (subList[4]==9999 and subList[5]==9999):#if  facteur 1 or 2 is included
-                m=5
-                print("preprocessed answers: "+ str(subList))
 
-                while 9999 in subList:
-                    subList.remove(9999)
-                try:
-                    print("processed answers: "+ str(subList))
-                    main(1,m,subList)
-                except IndexError:
-                    print("missing values for this participant\n")
-                    continue
-        
-            elif  subList[5]==9999:#if  only facteur 1 is included
-                m=6
-                print("preprocessed answers: "+ str(subList))
-
-                while 9999 in subList:
-                    subList.remove(9999)
-                try:
-                    print("processed answers: "+ str(subList))
-                    main(1,m,subList)
-                except IndexError:
+            m=7 #if  facteur 1 and 2 are included
+            print("preprocessed answers: "+ str(subList))
+            k=0
+            while k<len(subList):
+                if subList[k] == 9999:
+                    subList[k]=1
+                k+=1
                 
-                    print("missing values for this participant\n")
-                    continue
-                
-           
-           
-            else:
-                m=7 #if  facteur 1 and 2 are included
-                print("preprocessed answers: "+ str(subList))
 
-                try:
-                    print("processed answers: "+ str(subList))
-                    main(1,m,subList)
-                except IndexError:
-                    print("missing values for this participant\n")
-                    continue
+            try:
+                print("processed answers: "+ str(subList))
+                p=main(1,m,subList)
+                allpr+=p
+                allpr2 = allpr2 * (p**w)
+                
+            except IndexError:
+                print("missing values for this participant\n")
+                continue
             
             
             
@@ -178,43 +160,38 @@ def calc(excelname,excelsheet):
                     subList.append(j[i])
                 n+=1
             i+=1
-            if  subList[4]==9999 and subList[5]==9999: #if both facteur 1 and 2 are included
-                m=5
-                print("preprocessed answers: "+ str(subList))
+            m=7 #if  facteur 1 and 2 are included
+            print("preprocessed answers: "+ str(subList))
+            k=0
+            while k<len(subList):
+                if subList[k] == 9999:
+                    subList[k]=1
+                k+=1
+                
 
-                while 9999 in subList:
-                    subList.remove(9999)
-                try:
-                    print("processed answers: "+ str(subList))
-                    main(1,m,subList)
-                except IndexError:
-                    print("missing values for this participant\n")
-                    continue
-            elif  subList[5]==9999:#if only facteur 1 is included
-                m=6
-                print("preprocessed answers: "+ str(subList))
-
-                while 9999 in subList:
-                    subList.remove(9999)
-                try:
-                    print("processed answers: "+ str(subList))
-                    main(1,m,subList)
-                except IndexError:
-                    print("missing values for this participant\n")
-                    continue
-            
-            else:
-                m=7 #if neither facteur 1 or 2 are included
-                print("preprocessed answers: "+ str(subList))
-
-                try:
-                    print("processed answers: "+ str(subList))
-                    main(1,m,subList)
-                except IndexError:
-                    print("missing values for this participant\n")
-                    continue
+            try:
+                print("processed answers: "+ str(subList))
+                p=main(1,m,subList)
+                allpr+=p
+                allpr2 = allpr2 * (p**w)
+            except IndexError:
+                print("missing values for this participant\n")
+                continue
     
-calc("APP4WE -Montréal-Phase1_2020 10 26.xlsx",'APP4WE - Questionnaires')
-#calc("APP4WE-Québec-Phase1_2020 10 26.xlsx",'APP4WE-Questionnaire')
-      
-
+    return allpr,len(Blist[0]),allpr2
+    
+a,part1,part11=calc("APP4WE -Montréal-Phase1_2020 10 26.xlsx",'APP4WE - Questionnaires')
+b,part2,part22=calc("APP4WE-Québec-Phase1_2020 10 26.xlsx",'APP4WE-Questionnaire')
+totalprari=a+b
+totalprari=(totalprari)/float(part1+part2)
+totalprgeo=part11*part22
+print(totalprari)
+print(totalprgeo)
+xls = pd.ExcelFile("APP4WE -Montréal-Phase1_2020 10 26.xlsx")
+df=pd.read_excel(xls, 'APP4WE - Questionnaires')
+columns = list(df["QA1a Âge Femme"])
+xls = pd.ExcelFile("APP4WE-Québec-Phase1_2020 10 26.xlsx")
+dfq=pd.read_excel(xls, 'APP4WE-Questionnaire')
+for i in dfq["QA1a Âge Femme"]:
+    columns.append(i)
+print(columns)
