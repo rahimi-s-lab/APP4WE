@@ -107,13 +107,17 @@ def calc(excelname,excelsheet):
             columns.remove(i)
 
     del columns[0:31]  
-    del columns[::2]
     del columns[-1]
+
+    l= list(columns[::2])
+    lo=[]
+    del columns[::2]
 
 
     for i in columns:
         Blist.append(list(df[i]))
-
+    for i in l:
+        lo.append(list(df[i]))
 
 
     i=0
@@ -124,8 +128,42 @@ def calc(excelname,excelsheet):
         
         print("Participant #" + str(i+1))
         if i==0:
+            h=0
             for j in Blist:
-                subList.append(j[i])
+                if h<6:
+                    if lo[h][i] == 'Semaine de grossesse à laquelle le test sera fait' or lo[h][i]=='Égale' or lo[h][i]==9999:
+                        subList.append(j[i])
+                    else:
+                        subList.append(1/float(j[i]))
+                    
+                elif h<11:
+                    if lo[h][i] == 'Attente des résultats' or lo[h][i]=='Égale' or lo[h][i]==9999:
+                        subList.append(j[i])
+                    else:
+                        subList.append(1/float(j[i]))
+                        
+                    
+                elif h<15:
+                    if lo[h][i] == 'Taux de détection' or lo[h][i]=='Égale' or lo[h][i]==9999:
+                        subList.append(j[i])
+                    else:
+                        subList.append(1/float(j[i]))
+                elif h<18:
+                    if lo[h][i] == 'Inquiétée à tort (rique de faux positifs)' or lo[h][i]=='Égale' or lo[h][i]==9999:
+                        subList.append(j[i])
+                    else:
+                        subList.append(1/float(j[i]))
+                elif h<20:
+                    if lo[h][i] == 'Coût de chaque test' or lo[h][i]=='Égale' or lo[h][i]==9999:
+                        subList.append(j[i])
+                    else:
+                        subList.append(1/float(j[i]))
+                elif h<21:
+                    if lo[h][i] == 'Facteur 1' or lo[h][i]=='Égale' or lo[h][i]==9999:
+                        subList.append(j[i])
+                    else:
+                        subList.append(1/float(j[i]))
+                h+=1
             i+=1
 
             m=7 #if  facteur 1 and 2 are included
@@ -152,12 +190,82 @@ def calc(excelname,excelsheet):
           
         else:
             n=0
+            h=0
             for j in Blist:
 
                 try:
-                    subList[n] = (j[i])
+                    if h<6:
+                        if lo[h][i] == 'Semaine de grossesse à laquelle le test sera fait' or lo[h][i]=='Égale' or lo[h][i]==9999:
+                            subList[n] = (j[i])
+                        else:
+                            subList[n] = (1/float(j[i]))
+                    
+                    elif h<11:
+                        if lo[h][i] == 'Attente des résultats' or lo[h][i]=='Égale' or lo[h][i]==9999:
+                            subList[n] = (j[i])
+                        else:
+                            subList[n] = (1/float(j[i]))
+                        
+                    
+                    elif h<15:
+                        if lo[h][i] == 'Taux de détection' or lo[h][i]=='Égale' or lo[h][i]==9999:
+                            subList[n] = (j[i])
+                        else:
+                            subList[n] = (1/float(j[i]))
+                    elif h<18:
+                        if lo[h][i] == 'Inquiétée à tort (rique de faux positifs)' or lo[h][i]=='Égale' or lo[h][i]==9999:
+                            subList[n] = (j[i])
+                        else:
+                            subList[n] = (1/float(j[i]))
+                    elif h<20:
+                        if lo[h][i] == 'Coût de chaque test' or lo[h][i]=='Égale' or lo[h][i]==9999:
+                            subList[n] = (j[i])
+                        else:
+                            subList[n] = (1/float(j[i]))
+                    elif h<21:
+                        if lo[h][i] == 'Facteur 1' or lo[h][i]=='Égale' or lo[h][i]==9999:
+                            subList[n] = (j[i])
+                        else:
+                            subList[n] = (1/float(j[i]))
+                    h+=1
+                    
+                        
+                    
                 except IndexError:
-                    subList.append(j[i])
+                    if h<6:
+                        if lo[h][i] == 'Semaine de grossesse à laquelle le test sera fait' or lo[h][i]=='Égale' or lo[h][i]==9999:
+                            subList.append(j[i])
+                        else:
+                            subList.append(1/float(j[i]))
+                    
+                    elif h<11:
+                        if lo[h][i] == 'Attente des résultats' or lo[h][i]=='Égale' or lo[h][i]==9999:
+                            subList.append(j[i])
+                        else:
+                            subList.append(1/float(j[i]))
+                        
+                    
+                    elif h<15:
+                        if lo[h][i] == 'Taux de détection' or lo[h][i]=='Égale' or lo[h][i]==9999:
+                            subList.append(j[i])
+                        else:
+                            subList.append(1/float(j[i]))
+                    elif h<18:
+                        if lo[h][i] == 'Inquiétée à tort (rique de faux positifs)' or lo[h][i]=='Égale' or lo[h][i]==9999:
+                            subList.append(j[i])
+                        else:
+                            subList.append(1/float(j[i]))
+                    elif h<20:
+                        if lo[h][i] == 'Coût de chaque test' or lo[h][i]=='Égale' or lo[h][i]==9999:
+                            subList.append(j[i])
+                        else:
+                            subList.append(1/float(j[i]))
+                    elif h<21:
+                        if lo[h][i] == 'Facteur 1' or lo[h][i]=='Égale' or lo[h][i]==9999:
+                            subList.append(j[i])
+                        else:
+                            subList.append(1/float(j[i]))
+                    h+=1
                 n+=1
             i+=1
             m=7 #if  facteur 1 and 2 are included
